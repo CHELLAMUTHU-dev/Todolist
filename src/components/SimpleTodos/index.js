@@ -1,4 +1,4 @@
-import {Component} from 'react'
+import {useState} from 'react'
 import TodoItem from '../TodoItem'
 import './index.css'
 
@@ -37,36 +37,58 @@ const initialTodosList = [
   },
 ]
 
-class SimpleTodos extends Component {
-  state = {todolist: initialTodosList}
+const SimpleTodos = () => {
+  const [todolist, setTodoList] = useState(initialTodosList)
+  const [newTask, setNewTask] = useState('')
 
-  deleteTodo = id => {
-    const {todolist} = this.state
-
-    const updateTodoList = todolist.filter(eachTodo => eachTodo.id !== id)
-
-    this.setState({todolist: updateTodoList})
+  const deleteTodo = id => {
+    const filteredTodo = todolist.filter(todo => todo.id !== id)
+    setTodoList(filteredTodo)
   }
 
-  render() {
-    const {todolist} = this.state
-    return (
-      <div className="bg-container">
-        <div className="todo-container">
-          <h1 className="heading">Simple Todos</h1>
-          <ul className="todo-lists">
-            {todolist.map(eachTodo => (
-              <TodoItem
-                key={eachTodo.id}
-                todoDetails={eachTodo}
-                deleteTodo={this.deleteTodo}
-              />
-            ))}
-          </ul>
-        </div>
+  function getRandomId(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min
+  }
+
+  const addNewTask = () => {
+    const newTasKs = {
+      id: getRandomId(10, 1000),
+      title: newTask,
+    }
+    console.log(newTasKs)
+    setTodoList(prev => [...prev, newTasKs])
+    setNewTask('')
+  }
+
+  return (
+    <div className="bg-container">
+      <div className="todo-container">
+        <h1 className="heading">Simple Todos</h1>
+        <section>
+          <div>
+            <input
+              type="text"
+              id="todo"
+              placeholder="New Task..."
+              onChange={e => setNewTask(e.target.value)}
+            />
+            <button type="button" onClick={() => addNewTask()}>
+              Add Task
+            </button>
+          </div>
+        </section>
+        <h2>Your Task</h2>
+        <ul className="todo-lists">
+          {todolist.map(eachTodo => (
+            <TodoItem
+              key={eachTodo.id}
+              todoDetails={eachTodo}
+              deleteTodo={deleteTodo}
+            />
+          ))}
+        </ul>
       </div>
-    )
-  }
+    </div>
+  )
 }
-
 export default SimpleTodos
